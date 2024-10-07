@@ -18,6 +18,7 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 @UseInterceptors(ClassSerializerInterceptor)
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
+
   @Get()
   getMovies(@Query('title') title?: string) {
     // title 쿼리의 타입이 string 타입인지? 검증은 컨트롤러에서 함
