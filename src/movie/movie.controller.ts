@@ -10,14 +10,14 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { MoviesService } from './movies.service';
+import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 
-@Controller('movies')
+@Controller('movie')
 @UseInterceptors(ClassSerializerInterceptor)
-export class MoviesController {
-  constructor(private readonly moviesService: MoviesService) {}
+export class MovieController {
+  constructor(private readonly moviesService: MovieService) {}
 
   @Get()
   getMovies(@Query('title') title?: string) {

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { MoviesModule } from './movies/movies.module';
+import { MovieModule } from './movie/movie.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
-import { Movie } from './movies/entities/movie.entity';
+import { Movie } from './movie/entity/movie.entity';
 
 @Module({
   imports: [
@@ -40,10 +40,10 @@ import { Movie } from './movies/entities/movie.entity';
     //   username: process.env.DB_USERNAME,
     //   password: process.env.DB_PASSWORD,
     //   database: process.env.DB_DATABASE,
-    //   entities: [],
+    //   entity: [],
     //   synchronize: true, // 개발할 때만 true, prod에선 false
     // }),
-    MoviesModule,
+    MovieModule,
   ], // 또 다른 모듈을 이 모듈로 불러들일 때 사용
 })
 export class AppModule {}
