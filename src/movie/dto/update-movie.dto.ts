@@ -82,6 +82,10 @@ export class UpdateMovieDto {
   @IsOptional()
   detail?: string;
 
+  @IsNotEmpty()
+  @IsOptional()
+  directorId?: number;
+
   // -- 기본 Validator
   // @IsDefined() // null || undefined
   // @IsOptional() // 말 그대로 옵셔널로 만들어줌

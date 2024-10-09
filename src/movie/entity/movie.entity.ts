@@ -19,19 +19,25 @@ export class Movie extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   title: string;
 
   @Column()
   genre: string;
 
   @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.id, {
-    cascade: true,
+    cascade: true, // movie service create에서 movieDetail까지 동시에 생성 가능함.
+    nullable: false, // 실제 db에도 제약조건 적용
   })
   @JoinColumn()
   detail: MovieDetail;
 
-  @ManyToOne(() => Director, (director) => director.id)
+  @ManyToOne(() => Director, (director) => director.id, {
+    cascade: true,
+    nullable: false,
+  })
   director: Director;
 }
 
