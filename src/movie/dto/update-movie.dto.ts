@@ -1,4 +1,5 @@
 import {
+  ArrayNotEmpty,
   Contains,
   Equals,
   IsAlphanumeric,
@@ -18,6 +19,7 @@ import {
   IsNegative,
   IsNotEmpty,
   IsNotIn,
+  IsNumber,
   IsOptional,
   IsPositive,
   IsString,
@@ -71,20 +73,25 @@ function IsPasswordValid(validationOptions?: ValidationOptions) {
 
 export class UpdateMovieDto {
   @IsNotEmpty()
+  @IsString()
   @IsOptional()
   title?: string;
 
   @IsNotEmpty()
-  @IsOptional()
-  genre?: string;
-
-  @IsNotEmpty()
+  @IsString()
   @IsOptional()
   detail?: string;
 
   @IsNotEmpty()
+  @IsNumber()
   @IsOptional()
   directorId?: number;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  @IsOptional()
+  genreIds?: number[];
 
   // -- 기본 Validator
   // @IsDefined() // null || undefined

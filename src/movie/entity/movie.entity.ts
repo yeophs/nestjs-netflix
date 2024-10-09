@@ -2,6 +2,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +11,7 @@ import {
 import { BaseEntity } from '../../common/entity/base.entity';
 import { MovieDetail } from './movie-detail.entity';
 import { Director } from '../../director/entity/director.entity';
+import { Genre } from '../../genre/entity/genre.entity';
 
 // ManyToOne Director -> 감독은 여러 개의 영화를 만들 수 있음
 // OneToOne MovieDetail -> 영화는 하나의 상세 내용을 가질 수 있음
@@ -24,9 +27,6 @@ export class Movie extends BaseEntity {
   })
   title: string;
 
-  @Column()
-  genre: string;
-
   @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.id, {
     cascade: true, // movie service create에서 movieDetail까지 동시에 생성 가능함.
     nullable: false, // 실제 db에도 제약조건 적용
@@ -39,6 +39,10 @@ export class Movie extends BaseEntity {
     nullable: false,
   })
   director: Director;
+
+  @ManyToMany(() => Genre, (genre) => genre.id)
+  @JoinTable()
+  genres: Genre[];
 }
 
 /*
