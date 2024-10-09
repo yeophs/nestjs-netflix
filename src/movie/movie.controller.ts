@@ -22,26 +22,26 @@ export class MovieController {
   @Get()
   getMovies(@Query('title') title?: string) {
     // title 쿼리의 타입이 string 타입인지? 검증은 컨트롤러에서 함
-    return this.moviesService.getManyMovies(title);
+    return this.moviesService.findAll(title);
   }
 
   @Get(':id')
   getMovie(@Param('id') id: string) {
-    return this.moviesService.getMovieById(+id);
+    return this.moviesService.findOne(+id);
   }
 
   @Post()
   postMovie(@Body() body: CreateMovieDto) {
-    return this.moviesService.createMovie(body);
+    return this.moviesService.create(body);
   }
 
   @Patch(':id')
   patchMovie(@Param('id') id: string, @Body() body: UpdateMovieDto) {
-    return this.moviesService.updateMovie(+id, body);
+    return this.moviesService.update(+id, body);
   }
 
   @Delete(':id')
   deleteMovie(@Param('id') id: string) {
-    return this.moviesService.deleteMovie(+id);
+    return this.moviesService.remove(+id);
   }
 }

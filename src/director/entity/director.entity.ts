@@ -5,7 +5,7 @@ import { Movie } from '../../movie/entity/movie.entity';
 @Entity()
 export class Director extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   name: string;
