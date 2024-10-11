@@ -1,43 +1,7 @@
-import {
-  ArrayNotEmpty,
-  Contains,
-  Equals,
-  IsAlphanumeric,
-  IsArray,
-  IsBoolean,
-  IsCreditCard,
-  IsDate,
-  IsDateString,
-  IsDefined,
-  IsDivisibleBy,
-  IsEmpty,
-  IsEnum,
-  IsHexColor,
-  IsIn,
-  IsInt,
-  IsLatLong,
-  IsNegative,
-  IsNotEmpty,
-  IsNotIn,
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-  IsUUID,
-  Max,
-  MaxLength,
-  Min,
-  MinLength,
-  NotContains,
-  NotEquals,
-  registerDecorator,
-  Validate,
-  ValidationOptions,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-} from 'class-validator';
-import { ValidationArguments } from 'class-validator/types/validation/ValidationArguments';
+import { CreateMovieDto } from './create-movie.dto';
+import { PartialType } from '@nestjs/mapped-types';
 
+/*
 enum MovieGenre {
   Fantasy = 'fantasy',
   Action = 'action',
@@ -60,6 +24,7 @@ class PasswordValidator implements ValidatorConstraintInterface {
   }
 }
 
+
 function IsPasswordValid(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
@@ -71,28 +36,9 @@ function IsPasswordValid(validationOptions?: ValidationOptions) {
   };
 }
 
-export class UpdateMovieDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsOptional()
-  title?: string;
+*/
 
-  @IsNotEmpty()
-  @IsString()
-  @IsOptional()
-  detail?: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @IsOptional()
-  directorId?: number;
-
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsNumber({}, { each: true })
-  @IsOptional()
-  genreIds?: number[];
-
+export class UpdateMovieDto extends PartialType(CreateMovieDto) {
   // -- 기본 Validator
   // @IsDefined() // null || undefined
   // @IsOptional() // 말 그대로 옵셔널로 만들어줌
@@ -102,7 +48,6 @@ export class UpdateMovieDto {
   // @IsNotEmpty()
   // @IsIn(['action', 'fantasy'])
   // @IsNotIn(['action', 'fantasy'])
-
   // -- 타입 Validator
   // @IsBoolean()
   // @IsString()
@@ -112,14 +57,12 @@ export class UpdateMovieDto {
   // @IsEnum(MovieGenre)
   // @IsDate // 실제 Date 객체
   // @IsDateString() // ISO 8601 String
-
   // -- 숫자 Validator
   // @IsDivisibleBy(5)
   // @IsPositive()
   // @IsNegative()
   // @Min(100)
   // @Max(100)
-
   // -- 문자 Validator
   // @Contains('code factory')
   // @NotContains('code factory')
@@ -130,7 +73,6 @@ export class UpdateMovieDto {
   // @MinLength(4)
   // @IsUUID()
   // @IsLatLong()
-
   // -- 커스텀 Validator
   // @Validate(PasswordValidator, {
   //   message: '다른 에러 메세지',
