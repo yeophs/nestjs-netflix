@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // class validator를 사용하기 위해 GlobalPipe를 추가한다.
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // 애초에 정의하지 않은 값들은 전달되지 않는다.
