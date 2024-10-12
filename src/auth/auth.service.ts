@@ -67,9 +67,7 @@ export class AuthService {
     return await this.userRepository.findOne({ where: { email } });
   }
 
-  async login(rawToken: string) {
-    const { email, password } = this.parseBasicToken(rawToken);
-
+  async authenticate(email: string, password: string) {
     const user = await this.userRepository.findOne({
       where: { email },
     });
@@ -78,6 +76,10 @@ export class AuthService {
     const passOk = await bcrypt.compare(password, user.password);
     if (!passOk) throw new BadRequestException('잘못된 로그인 정보입니다!');
 
+    return user;
+  }
+
+  async issueToken(user: User, isRefreshToken: boolean) {
     const refreshTokenSecret = this.configService.get<string>(
       'REFRESH_TOKEN_SECRET',
     );
@@ -85,29 +87,27 @@ export class AuthService {
       'ACCESS_TOKEN_SECRET',
     );
 
+    return await this.jwtService.signAsync(
+      {
+        sub: user.id,
+        role: user.role,
+        type: isRefreshToken ? 'refresh' : 'access',
+      },
+      {
+        secret: isRefreshToken ? refreshTokenSecret : accessTokenSecret,
+        expiresIn: isRefreshToken ? '24h' : 300,
+      },
+    );
+  }
+
+  async login(rawToken: string) {
+    const { email, password } = this.parseBasicToken(rawToken);
+
+    const user = await this.authenticate(email, password);
+
     return {
-      refreshToken: await this.jwtService.signAsync(
-        {
-          sub: user.id,
-          role: user.role,
-          type: 'refresh',
-        },
-        {
-          secret: refreshTokenSecret,
-          expiresIn: '24h',
-        },
-      ),
-      accessToken: await this.jwtService.signAsync(
-        {
-          sub: user.id,
-          role: user.role,
-          type: 'access',
-        },
-        {
-          secret: accessTokenSecret,
-          expiresIn: 300,
-        },
-      ),
+      refreshToken: await this.issueToken(user, true),
+      accessToken: await this.issueToken(user, false),
     };
   }
 }
