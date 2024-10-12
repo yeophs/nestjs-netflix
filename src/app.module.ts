@@ -26,6 +26,8 @@ import { User } from './user/entity/user.entity';
         DB_PASSWORD: Joi.string().required(),
         DB_DATABASE: Joi.string().required(),
         HASH_ROUNDS: Joi.number().required(),
+        ACCESS_TOKEN_SECRET: Joi.string().required(),
+        REFRESH_TOKEN_SECRET: Joi.string().required(),
       }),
     }),
     // 비동기여야 되는 이유? ConfigModule이 IoC에 모두 등록된 이후 받으려고!
