@@ -30,12 +30,11 @@ export class AuthController {
   }
 
   @Post('token/access')
-  async rotateAccessToken(@Headers('authorization') refreshToken: string) {
-    const payload = await this.authService.parseBearerToken(refreshToken, true);
-
+  async rotateAccessToken(@Request() req) {
     return {
       accessToken: await this.authService.issueToken(
-        { id: payload.sub, role: payload.role },
+        // req.user // 강의에서 내온 부분
+        { id: req.user.sub, role: req.user.role }, // 실제 적용해야할 부분
         false,
       ),
     };
