@@ -46,7 +46,7 @@ export class BearerTokenMiddleware implements NestMiddleware {
       req.user = payload;
       next();
     } catch (err) {
-      throw new UnauthorizedException('유효하지 않은 토큰입니다!');
+      next();
     }
   }
 
