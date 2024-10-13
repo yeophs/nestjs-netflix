@@ -31,7 +31,7 @@ export class BearerTokenMiddleware implements NestMiddleware {
       const decodedPayload = this.jwtService.decode(token);
 
       if (!['refresh', 'access'].includes(decodedPayload.type)) {
-        throw new UnauthorizedException('잘못된 토큰입니다!');
+        throw new UnauthorizedException('유효하지 않은 토큰입니다!');
       }
 
       const secretKey =
@@ -46,7 +46,7 @@ export class BearerTokenMiddleware implements NestMiddleware {
       req.user = payload;
       next();
     } catch (err) {
-      throw new UnauthorizedException('잘못된 토큰입니다!');
+      throw new UnauthorizedException('유효하지 않은 토큰입니다!');
     }
   }
 

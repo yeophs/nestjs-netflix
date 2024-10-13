@@ -10,7 +10,6 @@ import {
   Post,
   Query,
   UseInterceptors,
-  Request,
 } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
@@ -23,11 +22,7 @@ export class MovieController {
   constructor(private readonly moviesService: MovieService) {}
 
   @Get()
-  getMovies(
-    @Request() req: any,
-    @Query('title', MovieTitleValidationPipe) title?: string,
-  ) {
-    console.log(req.user);
+  getMovies(@Query('title', MovieTitleValidationPipe) title?: string) {
     // title 쿼리의 타입이 string 타입인지? 검증은 컨트롤러에서 함
     return this.moviesService.findAll(title);
   }
