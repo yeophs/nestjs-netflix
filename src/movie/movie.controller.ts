@@ -31,7 +31,6 @@ export class MovieController {
     return this.moviesService.findAll(title);
   }
 
-  @RBAC(Role.admin)
   @Public()
   @Get(':id')
   getMovie(@Param('id', ParseIntPipe) id: number) {
