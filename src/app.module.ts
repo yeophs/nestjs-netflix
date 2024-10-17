@@ -85,7 +85,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(BearerTokenMiddleware)
-
       .exclude(
         {
           path: 'auth/login',
