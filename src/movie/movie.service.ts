@@ -3,26 +3,28 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Movie } from './entity/movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Like, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { MovieDetail } from './entity/movie-detail.entity';
 import { Director } from '../director/entity/director.entity';
 import { Genre } from '../genre/entity/genre.entity';
+import { GetMoviesDto } from './dto/get-movies.dto';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
-export class MovieService {
+export class MovieService extends CommonService {
   constructor(
     @InjectRepository(Movie)
     private readonly movieRepository: Repository<Movie>,
     @InjectRepository(MovieDetail)
     private readonly movieDetailRepository: Repository<MovieDetail>,
-    @InjectRepository(Director)
-    private readonly directorRepository: Repository<Director>,
-    @InjectRepository(Genre)
-    private readonly genreRepository: Repository<Genre>,
     private readonly dataSource: DataSource,
-  ) {}
+  ) {
+    super();
+  }
 
-  async findAll(title?: string) {
+  async findAll(dto: GetMoviesDto) {
+    const { title, take, page } = dto;
+
     const qb = this.movieRepository
       .createQueryBuilder('movie')
       .leftJoinAndSelect('movie.director', 'director')
@@ -32,20 +34,11 @@ export class MovieService {
       qb.where('movie.title LIKE :title', { title: `%${title}%` });
     }
 
-    return await qb.getManyAndCount();
+    if (take && page) {
+      this.applyPagePaginationParamsToQb(qb, dto);
+    }
 
-    // if (!title) {
-    //   return this.movieRepository.findAndCount({
-    //     relations: ['director', 'genres'],
-    //   });
-    // }
-    //
-    // return await this.movieRepository.findAndCount({
-    //   where: {
-    //     title: Like(`%${title}%`),
-    //   },
-    //   relations: ['director', 'genres'],
-    // });
+    return await qb.getManyAndCount();
   }
 
   async findOne(id: number) {
@@ -58,17 +51,6 @@ export class MovieService {
       .getOne();
 
     return movie;
-
-    // const movie = await this.movieRepository.findOne({
-    //   where: { id },
-    //   relations: ['detail', 'director', 'genres'],
-    // });
-    //
-    // if (!movie) {
-    //   throw new NotFoundException('존재하지 않는 ID의 영화입니다!');
-    // }
-    //
-    // return movie;
   }
 
   async create(createMovieDto: CreateMovieDto) {
