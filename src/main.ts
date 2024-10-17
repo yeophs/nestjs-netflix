@@ -9,6 +9,9 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true, // 애초에 정의하지 않은 값들은 전달되지 않는다.
       forbidNonWhitelisted: true, // 있으면 안되는 property를 금지한다.
+      transformOptions: {
+        enableImplicitConversion: true, // TypeScript로 입력된 타입 기반으로 변경(url은 기본적으로 string)
+      },
     }),
   );
   await app.listen(3000);
