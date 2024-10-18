@@ -10,6 +10,7 @@ import { Genre } from '../genre/entity/genre.entity';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { CommonService } from '../common/common.service';
 import { join } from 'path';
+import { rename } from 'fs/promises';
 
 @Injectable()
 export class MovieService extends CommonService {
@@ -58,11 +59,7 @@ export class MovieService extends CommonService {
     return movie;
   }
 
-  async create(
-    createMovieDto: CreateMovieDto,
-    movieFileName: string,
-    qr: QueryRunner,
-  ) {
+  async create(createMovieDto: CreateMovieDto, qr: QueryRunner) {
     const director = await qr.manager.findOne(Director, {
       where: { id: createMovieDto.directorId },
     });
@@ -91,7 +88,14 @@ export class MovieService extends CommonService {
       .execute();
 
     const movieDetailId = movieDetail.identifiers[0].id;
+
     const movieFolder = join('public', 'movie');
+    const tempFolder = join('public', 'temp');
+
+    await rename(
+      join(process.cwd(), tempFolder, createMovieDto.movieFileName),
+      join(process.cwd(), movieFolder, createMovieDto.movieFileName),
+    );
 
     const movie = await qr.manager
       .createQueryBuilder()
@@ -102,7 +106,7 @@ export class MovieService extends CommonService {
         detail: { id: movieDetailId },
         director: director,
         genres: genres,
-        movieFilePath: join(movieFolder, movieFileName),
+        movieFilePath: join(movieFolder, createMovieDto.movieFileName),
       })
       .execute();
 
@@ -114,7 +118,6 @@ export class MovieService extends CommonService {
       .of(movieId)
       .add(genres.map((g) => g.id));
 
-    // 아래는 이미 커밋이 된 상태라 트랜잭션 필요 없음.
     return await qr.manager.findOne(Movie, {
       where: {
         id: movieId,
