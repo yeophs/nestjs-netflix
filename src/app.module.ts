@@ -27,6 +27,7 @@ import { ForbiddenExceptionFilter } from './common/filter/forbidden.filter';
 import { QueryFailedExceptionFilter } from './common/filter/query-failed.filter';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MovieUserLike } from './movie/entity/movie-user-like.entity';
 
 @Module({
   imports: [
@@ -54,7 +55,7 @@ import { join } from 'path';
         username: configService.get<string>(envVariableKeys.DB_USERNAME),
         password: configService.get<string>(envVariableKeys.DB_PASSWORD),
         database: configService.get<string>(envVariableKeys.DB_DATABASE),
-        entities: [Movie, MovieDetail, Director, Genre, User],
+        entities: [Movie, MovieDetail, Director, Genre, User, MovieUserLike],
         synchronize: true, // 개발할 때만 true, prod에선 false
       }),
       inject: [ConfigService],
