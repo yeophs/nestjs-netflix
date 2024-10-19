@@ -22,6 +22,9 @@ import { Public } from '../auth/decorator/public.decorator';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { TransactionInterceptor } from '../common/interceptor/transaction.interceptor';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UserId } from '../user/decorator/user-id.decorator';
+import { QueryRunner } from '../common/decorator/query-runner.decorator';
+import { QueryRunner as QR } from 'typeorm';
 
 @Controller('movie')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -60,8 +63,12 @@ export class MovieController {
       },
     }),
   )
-  postMovie(@Body() body: CreateMovieDto, @Request() req) {
-    return this.moviesService.create(body, req.queryRunner);
+  postMovie(
+    @Body() body: CreateMovieDto,
+    @QueryRunner() queryRunner: QR,
+    @UserId() userId: number,
+  ) {
+    return this.moviesService.create(body, userId, queryRunner);
   }
 
   @RBAC(Role.admin)
