@@ -28,18 +28,18 @@ import { QueryRunner as QR } from 'typeorm';
 @Controller('movie')
 @UseInterceptors(ClassSerializerInterceptor)
 export class MovieController {
-  constructor(private readonly moviesService: MovieService) {}
+  constructor(private readonly movieService: MovieService) {}
 
   @Public()
   @Get()
   getMovies(@Query() dto: GetMoviesDto) {
-    return this.moviesService.findAll(dto);
+    return this.movieService.findAll(dto);
   }
 
   @Public()
   @Get(':id')
   getMovie(@Param('id', ParseIntPipe) id: number) {
-    return this.moviesService.findOne(id);
+    return this.movieService.findOne(id);
   }
 
   @RBAC(Role.admin)
@@ -67,7 +67,7 @@ export class MovieController {
     @QueryRunner() queryRunner: QR,
     @UserId() userId: number,
   ) {
-    return this.moviesService.create(body, userId, queryRunner);
+    return this.movieService.create(body, userId, queryRunner);
   }
 
   @RBAC(Role.admin)
@@ -76,12 +76,28 @@ export class MovieController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateMovieDto,
   ) {
-    return this.moviesService.update(id, body);
+    return this.movieService.update(id, body);
   }
 
   @Delete(':id')
   @RBAC(Role.admin)
   deleteMovie(@Param('id', ParseIntPipe) id: number) {
-    return this.moviesService.remove(id);
+    return this.movieService.remove(id);
+  }
+
+  @Post(':id/like')
+  createMovieLike(
+    @Param('id', ParseIntPipe) movieId: number,
+    @UserId() userId: number,
+  ) {
+    return this.movieService.toggleMovieLike(movieId, userId, true);
+  }
+
+  @Post(':id/dislike')
+  createMovieDislike(
+    @Param('id', ParseIntPipe) movieId: number,
+    @UserId() userId: number,
+  ) {
+    return this.movieService.toggleMovieLike(movieId, userId, false);
   }
 }
