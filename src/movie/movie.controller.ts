@@ -10,7 +10,6 @@ import {
   Patch,
   Post,
   Query,
-  Request,
   UseInterceptors,
 } from '@nestjs/common';
 import { MovieService } from './movie.service';
@@ -81,6 +80,7 @@ export class MovieController {
   }
 
   @Delete(':id')
+  @RBAC(Role.admin)
   deleteMovie(@Param('id', ParseIntPipe) id: number) {
     return this.moviesService.remove(id);
   }
