@@ -53,13 +53,18 @@ export class MovieService extends CommonService {
       .leftJoinAndSelect('movie.detail', 'detail')
       .leftJoinAndSelect('movie.director', 'director')
       .leftJoinAndSelect('movie.genres', 'genres')
+      .leftJoinAndSelect('movie.creator', 'creator')
       .where('movie.id = :id', { id })
       .getOne();
 
     return movie;
   }
 
-  async create(createMovieDto: CreateMovieDto, qr: QueryRunner) {
+  async create(
+    createMovieDto: CreateMovieDto,
+    userId: number,
+    qr: QueryRunner,
+  ) {
     const director = await qr.manager.findOne(Director, {
       where: { id: createMovieDto.directorId },
     });
@@ -92,11 +97,6 @@ export class MovieService extends CommonService {
     const movieFolder = join('public', 'movie');
     const tempFolder = join('public', 'temp');
 
-    await rename(
-      join(process.cwd(), tempFolder, createMovieDto.movieFileName),
-      join(process.cwd(), movieFolder, createMovieDto.movieFileName),
-    );
-
     const movie = await qr.manager
       .createQueryBuilder()
       .insert()
@@ -105,6 +105,7 @@ export class MovieService extends CommonService {
         title: createMovieDto.title,
         detail: { id: movieDetailId },
         director: director,
+        creator: { id: userId },
         genres: genres,
         movieFilePath: join(movieFolder, createMovieDto.movieFileName),
       })
@@ -117,6 +118,12 @@ export class MovieService extends CommonService {
       .relation(Movie, 'genres')
       .of(movieId)
       .add(genres.map((g) => g.id));
+
+    // 트랜잭션 작업에 포함되지 않으므로 잉여파일이 생성되지 않기 위해 최대한 아래에 배치
+    await rename(
+      join(process.cwd(), tempFolder, createMovieDto.movieFileName),
+      join(process.cwd(), movieFolder, createMovieDto.movieFileName),
+    );
 
     return await qr.manager.findOne(Movie, {
       where: {
