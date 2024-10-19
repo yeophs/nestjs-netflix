@@ -60,7 +60,9 @@ export class Movie extends BaseEntity {
   @JoinTable()
   genres: Genre[];
 
-  @OneToMany(() => MovieUserLike, (mul) => mul.movie)
+  @OneToMany(() => MovieUserLike, (mul) => mul.movie, {
+    onDelete: 'CASCADE',
+  })
   likedUsers: MovieUserLike[];
 }
 

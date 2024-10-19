@@ -36,6 +36,8 @@ export class User extends BaseEntity {
   @OneToMany(() => Movie, (movie) => movie.creator)
   createdMovies: Movie[];
 
-  @OneToMany(() => MovieUserLike, (mul) => mul.user)
+  @OneToMany(() => MovieUserLike, (mul) => mul.user, {
+    onDelete: 'CASCADE',
+  })
   likedMovies: MovieUserLike[];
 }
