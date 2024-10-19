@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '../../common/entity/base.entity';
 import { Exclude } from 'class-transformer';
+import { Movie } from '../../movie/entity/movie.entity';
 
 export enum Role {
   admin,
@@ -30,4 +31,7 @@ export class User extends BaseEntity {
     default: Role.user,
   })
   role: Role;
+
+  @OneToMany(() => Movie, (movie) => movie.creator)
+  createdMovies: Movie[];
 }
