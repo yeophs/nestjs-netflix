@@ -24,6 +24,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserId } from '../user/decorator/user-id.decorator';
 import { QueryRunner } from '../common/decorator/query-runner.decorator';
 import { QueryRunner as QR } from 'typeorm';
+import {
+  CacheKey,
+  CacheTTL,
+  CacheInterceptor as CI,
+} from '@nestjs/cache-manager';
 
 @Controller('movie')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -34,6 +39,15 @@ export class MovieController {
   @Get()
   getMovies(@Query() dto: GetMoviesDto, @UserId() userId?: number) {
     return this.movieService.findAll(dto, userId);
+  }
+
+  // /movie/recent -> 아래 :id에 걸리지 않게 위에 선언.
+  @Get('recent')
+  @UseInterceptors(CI)
+  @CacheKey('getMoviesRecent') // 키를 직접 설정해주므로 쿼리 파라미터가 변경되어도 같은 키를 가진다.
+  @CacheTTL(1000)
+  getMoviesRecent() {
+    return this.movieService.findRecent();
   }
 
   @Public()
