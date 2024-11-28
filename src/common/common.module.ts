@@ -5,6 +5,7 @@ import { diskStorage } from 'multer';
 import { join } from 'path';
 import { CommonController } from './common.controller';
 import * as uuid from 'uuid';
+import { TasksService } from './tasks.service';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import * as uuid from 'uuid';
     }),
   ],
   controllers: [CommonController],
-  providers: [CommonService],
+  providers: [CommonService, TasksService],
   exports: [CommonService],
 })
 export class CommonModule {}
