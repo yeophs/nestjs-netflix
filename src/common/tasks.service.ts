@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { readdir, unlink } from 'fs/promises';
@@ -6,6 +6,7 @@ import { join, parse } from 'path';
 import { Movie } from 'src/movie/entity/movie.entity';
 import { Repository } from 'typeorm';
 import { DefaultLogger } from './logger/default.logger';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class TasksService {
@@ -15,19 +16,21 @@ export class TasksService {
     @InjectRepository(Movie)
     private readonly movieRepository: Repository<Movie>,
     private readonly schedulerRegistry: SchedulerRegistry,
-    private readonly logger: DefaultLogger,
+    // private readonly logger: DefaultLogger,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
   ) {}
 
-  @Cron('*/5 * * * * *')
+  // @Cron('*/5 * * * * *')
   logEverySecond() {
     // fatal, error, warn, log, debug, verbose
     // 필요 <------------------> 별로 필요 없음 (기준은 프로젝트마다 다름, 아래는 일반적인 기준)
-    this.logger.fatal('FATAL 레벨 로그'); // 지금 당장 해결해야 하는 문제
-    this.logger.error('ERROR 레벨 로그'); // 중요한 문제가 생김
-    this.logger.warn('WARN 레벨 로그'); // 일어나면 안좋지만, 프로그램 실행에 문제가 되진 않음.
-    this.logger.log('LOG 레벨 로그'); // 정보성 로그(== info)
-    this.logger.debug('DEBUG 레벨 로그'); // dev 환경에서 확인하기 위해 사용하는 로그
-    this.logger.verbose('VERBOSE 레벨 로그'); // 진짜 중요하지 않은 내용. 궁금해서 찍어본 로그
+    this.logger.fatal('FATAL 레벨 로그', null, TasksService.name); // 지금 당장 해결해야 하는 문제
+    this.logger.error('ERROR 레벨 로그', null, TasksService.name); // 중요한 문제가 생김
+    this.logger.warn('WARN 레벨 로그', TasksService.name); // 일어나면 안좋지만, 프로그램 실행에 문제가 되진 않음.
+    this.logger.log('LOG 레벨 로그', TasksService.name); // 정보성 로그(== info)
+    this.logger.debug('DEBUG 레벨 로그', TasksService.name); // dev 환경에서 확인하기 위해 사용하는 로그
+    this.logger.verbose('VERBOSE 레벨 로그', TasksService.name); // 진짜 중요하지 않은 내용. 궁금해서 찍어본 로그
   }
 
   // @Cron('* * * * * *')
