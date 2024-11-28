@@ -39,6 +39,11 @@ export class Movie extends BaseEntity {
   })
   likeCount: number;
 
+  @Column({
+    default: 0,
+  })
+  dislikeCount: number;
+
   @OneToOne(() => MovieDetail, (movieDetail) => movieDetail.id, {
     cascade: true, // movie service create에서 movieDetail까지 동시에 생성 가능함.
     nullable: false, // 실제 db에도 제약조건 적용
