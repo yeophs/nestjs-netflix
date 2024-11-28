@@ -5,17 +5,29 @@ import { readdir, unlink } from 'fs/promises';
 import { join, parse } from 'path';
 import { Movie } from 'src/movie/entity/movie.entity';
 import { Repository } from 'typeorm';
+import { DefaultLogger } from './logger/default.logger';
 
 @Injectable()
 export class TasksService {
+  // private readonly logger = new Logger(TasksService.name);
+
   constructor(
     @InjectRepository(Movie)
     private readonly movieRepository: Repository<Movie>,
     private readonly schedulerRegistry: SchedulerRegistry,
+    private readonly logger: DefaultLogger,
   ) {}
 
+  @Cron('*/5 * * * * *')
   logEverySecond() {
-    console.log('1초마다 실행!');
+    // fatal, error, warn, log, debug, verbose
+    // 필요 <------------------> 별로 필요 없음 (기준은 프로젝트마다 다름, 아래는 일반적인 기준)
+    this.logger.fatal('FATAL 레벨 로그'); // 지금 당장 해결해야 하는 문제
+    this.logger.error('ERROR 레벨 로그'); // 중요한 문제가 생김
+    this.logger.warn('WARN 레벨 로그'); // 일어나면 안좋지만, 프로그램 실행에 문제가 되진 않음.
+    this.logger.log('LOG 레벨 로그'); // 정보성 로그(== info)
+    this.logger.debug('DEBUG 레벨 로그'); // dev 환경에서 확인하기 위해 사용하는 로그
+    this.logger.verbose('VERBOSE 레벨 로그'); // 진짜 중요하지 않은 내용. 궁금해서 찍어본 로그
   }
 
   // @Cron('* * * * * *')
